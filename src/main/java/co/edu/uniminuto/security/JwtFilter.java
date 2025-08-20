@@ -9,11 +9,20 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
-import java.util.Collections;
+import co.edu.uniminuto.jpa.UsuarioRepository;
+import co.edu.uniminuto.entity.Usuario;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
 
+
+
+@Component
 public class JwtFilter extends OncePerRequestFilter {
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -29,10 +38,16 @@ public class JwtFilter extends OncePerRequestFilter {
             if (JwtUtil.validateToken(token)) {
                 String username = JwtUtil.extractUsername(token);
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                Usuario usuario = usuarioRepository.findByUsername(username).orElse(null);
+                if (usuario != null) {
+                    String role = usuario.getRole().getName().toUpperCase();
+                    SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
+
+                    UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(username, null, java.util.List.of(authority));
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             } else {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
