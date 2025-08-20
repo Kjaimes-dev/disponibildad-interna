@@ -6,6 +6,7 @@ import co.edu.uniminuto.dto.RegisterRequest;
 // import co.edu.uniminuto.entity.Role;
 import co.edu.uniminuto.entity.Usuario;
 import co.edu.uniminuto.jpa.RoleRepository;
+import co.edu.uniminuto.security.JwtUtil;
 import co.edu.uniminuto.services.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,13 +30,14 @@ public class AuthController {
         if(u == null || !u.getPassword().equals(req.password)) { // TODOh: BCrypt
             return ResponseEntity.status(401).body("Credenciales inválidas");
         }
+        String token = JwtUtil.generateToken(u.getUsername());
         return ResponseEntity.ok(new LoginResponse(
             u.getId(),
             u.getUsername(),
             u.getEmail(),
             u.getRole().getName(),
             u.getStatus().name(),
-            "FAKE_TOKEN" // TODOh: JWT
+            token
         ));
     }
 
