@@ -3,7 +3,7 @@ package co.edu.uniminuto.dto;
 import java.math.BigDecimal;
 
 public class EmpleadoRequest {
-    public Integer userId; // opcional si lo ligas a un usuario ya creado
+    public Integer userId; // opcional se ligas a un usuario ya creado
     public String tipoDocumento;
     public String numeroDocumento;
     public String nombres;
