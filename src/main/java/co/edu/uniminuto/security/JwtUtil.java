@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 public class JwtUtil {
 
     private static final String SECRET = "admin123admin123admin123admin123"; // mínimo 256 bits
-    private static final long EXPIRATION = 1000 * 60 * 60 * 10; // 10 horas
+    private static final long EXPIRATION = 1000 * 60 * 90; // 1.5 horas
 
     private static final Key KEY = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
